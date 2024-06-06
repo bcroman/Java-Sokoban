@@ -1,0 +1,69 @@
+@startuml
+abstract class sokoban.MapElement
+annotation java.lang.Override
+class java.awt.Graphics
+class java.awt.Image
+class java.awt.event.KeyAdapter
+class java.awt.event.KeyEvent
+class java.io.BufferedReader
+class java.io.IOException
+class java.io.InputStream
+class java.io.InputStreamReader
+class java.util.ArrayList
+class java.util.HashMap
+class java.util.List
+class java.util.Map
+class java.util.Objects
+class javax.imageio.ImageIO
+class sokoban.Coord
+class sokoban.Crate
+class sokoban.Diamond
+class sokoban.Floor
+class sokoban.Game
+class sokoban.GameEngine
+class sokoban.JPanel
+class sokoban.Level
+class sokoban.Player
+class sokoban.Wall
+sokoban.MapElement ..> java.awt.Graphics
+sokoban.MapElement ..> java.awt.Image
+sokoban.Coord ..> java.lang.Override
+sokoban.Coord ..> java.util.Objects
+sokoban.Crate --|> sokoban.MapElement
+sokoban.Crate ..> java.lang.Override
+sokoban.Crate ..> java.awt.Graphics
+sokoban.Crate ..> java.awt.Image
+sokoban.Diamond --|> sokoban.MapElement
+sokoban.Diamond ..> java.lang.Override
+sokoban.Diamond ..> java.awt.Graphics
+sokoban.Diamond ..> java.awt.Image
+sokoban.Floor --|> sokoban.MapElement
+sokoban.Floor ..> java.lang.Override
+sokoban.Floor ..> java.awt.Graphics
+sokoban.Floor ..> java.awt.Image
+sokoban.Game ..> java.lang.Override
+sokoban.Game ..> java.awt.event.KeyAdapter
+sokoban.Game ..> java.awt.event.KeyEvent
+sokoban.Game ..> java.io.IOException
+sokoban.Game ..> java.io.InputStream
+sokoban.Game ..> java.util.HashMap
+sokoban.Game ..> java.util.Map
+sokoban.Game ..> javax.imageio.ImageIO
+sokoban.Game --|> sokoban.JPanel
+sokoban.GameEngine ..> java.awt.Image
+sokoban.GameEngine ..> java.util.Map
+sokoban.Level ..> java.io.BufferedReader
+sokoban.Level ..> java.io.IOException
+sokoban.Level ..> java.io.InputStream
+sokoban.Level ..> java.io.InputStreamReader
+sokoban.Level ..> java.util.ArrayList
+sokoban.Level ..> java.util.List
+sokoban.Player --|> sokoban.MapElement
+sokoban.Player ..> java.lang.Override
+sokoban.Player ..> java.awt.Graphics
+sokoban.Player ..> java.awt.Image
+sokoban.Wall --|> sokoban.MapElement
+sokoban.Wall ..> java.lang.Override
+sokoban.Wall ..> java.awt.Graphics
+sokoban.Wall ..> java.awt.Image
+@enduml
