@@ -1,5 +1,6 @@
 package sokoban;
 
+// Imports
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -12,49 +13,46 @@ import javax.imageio.ImageIO;
 
 /**
  * Ben Collins 21006366
- * 15/05/2024
- * Version 1
+ * 06/06/2024
+ * Version 2.0
  * The `Game` class represents the main game panel for the Sokoban game.
  * It extends the `JPanel` class and contains the game logic and UI components.
  */
 public class Game extends JPanel {
 
-    //Varibles
+    // Instance variables
     private Level level;
     private Map<Coord, MapElement> elements;
     private Map<Character, Image> imageMap;
     private Player player;
     private int moveCount;
     private GameEngine gameEngine;
+    private int currentLevelIndex;
     private final String[] mapFiles = {
-        "maps/level1.txt",
-        "maps/level2.txt",
-        "maps/level3.txt",
-        "maps/level4.txt",
-        "maps/level5.txt"
+            "maps/level1.txt",
+            "maps/level2.txt",
+            "maps/level3.txt",
+            "maps/level4.txt",
+            "maps/level5.txt"
     };
 
-    /**
-        * Constructs a new instance of the Game class.
-        * Initializes the level, elements, imageMap, and loads the images.
-        * Sets up the user interface, loads the first level by default, and makes the game focusable.
-        */
+    // Constructor
     public Game() {
         level = new Level();
         elements = new HashMap<>();
         imageMap = new HashMap<>();
         loadImages();
         setupUI();
-        loadLevel(mapFiles[0]); // Load the first level by default
+        currentLevelIndex = 0;
+        loadLevel(mapFiles[currentLevelIndex]); // Load the first level by default
         setFocusable(true);
     }
 
+
     /**
-     * Loads the images used in the game and stores them in the imageMap.
-     * The imageMap is a mapping of characters to corresponding images.
-     * The characters represent different elements in the game, such as walls, floors, players, crates, and diamonds.
-     * The images are loaded from the specified file paths.
-     * If an IOException occurs during the loading process, it is printed to the console.
+     * Loads the images used in the game.
+     * The images are loaded from the specified file paths and stored in the imageMap.
+     * If an error occurs while loading the images, an error message is displayed and the application exits.
      */
     private void loadImages() {
         try {
@@ -63,8 +61,12 @@ public class Game extends JPanel {
             imageMap.put('@', loadImage("graphics/player.png"));
             imageMap.put('*', loadImage("graphics/crate.png"));
             imageMap.put('.', loadImage("graphics/diamond.png"));
+            imageMap.put('C', loadImage("graphics/CrateInPlace.png")); // New image for crate on diamond
         } catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading images: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(1); // Exit the application if images can't be loaded
         }
     }
 
@@ -80,9 +82,9 @@ public class Game extends JPanel {
     }
 
     /**
-        * Sets up the user interface for the game.
-        * Configures the layout and adds a key listener.
-        */
+     * Sets up the user interface for the game. Configures the layout and adds a key
+     * listener.
+     */
     private void setupUI() {
         setLayout(new BorderLayout());
         addKeyListener(new KeyHandler());
@@ -90,7 +92,7 @@ public class Game extends JPanel {
 
     /**
      * Loads a level from the specified file and initializes the game state.
-     * 
+     *
      * @param filename the name of the file containing the level data
      */
     private void loadLevel(String filename) {
@@ -99,43 +101,76 @@ public class Game extends JPanel {
         elements.clear();
         moveCount = 0;
         initializeElements();
-        gameEngine = new GameEngine(level, elements, player); // Initialize GameEngine
+        gameEngine = new GameEngine(level, elements, player, imageMap.get(' '), imageMap.get('.'), imageMap.get('*'),
+                imageMap.get('C'), this); // Initialize GameEngine with floor, diamond, default crate, and crate on
+                                          // diamond images
         repaint();
     }
 
     /**
+     * Loads the next level if available, or displays a win message if all levels
+     * are completed.
+     */
+    public void loadNextLevel() {
+        currentLevelIndex++;
+        if (currentLevelIndex < mapFiles.length) {
+            showLevelCompleteMessage();
+            loadLevel(mapFiles[currentLevelIndex]);
+        } else {
+            JOptionPane.showMessageDialog(this, "Congratulations! You completed all levels!", "Game Over",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /**
+     * Shows a message with the number of moves and current level.
+     */
+    private void showLevelCompleteMessage() {
+        JOptionPane.showMessageDialog(this,
+                "Moves: " + moveCount + "\nLevel: " + currentLevelIndex + "/" + mapFiles.length, "Level Complete",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
      * Initializes the elements of the game based on the map provided by the level.
-     * Each character in the map represents a specific element in the game.
-     * The elements are created and stored in the elements map.
+     * Each character in the map represents a specific element in the game. The
+     * elements are created and stored in the elements map.
      */
     private void initializeElements() {
-        char[][] map = level.getMap();
-        for (int y = 0; y < level.getRows(); y++) {
-            for (int x = 0; x < level.getCols(); x++) {
-                char c = map[y][x];
-                MapElement element = null;
+        char[][] map = level.getMap(); // Get the map from the level
+        for (int y = 0; y < level.getRows(); y++) { // Iterate over the rows
+            for (int x = 0; x < level.getCols(); x++) { // Iterate over the columns
+                char c = map[y][x]; // Get the character at the current position
+                MapElement element = null; // Initialize the element to null
                 switch (c) {
-                    case 'X':
+                    case 'X': // Wall
                         element = new Wall(x, y, imageMap.get('X'));
                         break;
-                    case ' ':
+                    case ' ': // Floor
                         element = new Floor(x, y, imageMap.get(' '));
                         break;
-                    case '@':
+                    case '@': // Player
                         player = new Player(x, y, imageMap.get('@'));
                         element = player;
                         break;
-                    case '*':
+                    case '*': // Crate
                         element = new Crate(x, y, imageMap.get('*'));
                         break;
-                    case '.':
+                    case '.': // Diamond
                         element = new Diamond(x, y, imageMap.get('.'));
                         break;
                 }
-                if (element != null) {
+                if (element != null) { // Add the element to the map if it is not null
                     elements.put(new Coord(x, y), element);
                 }
             }
+        }
+
+        // Debug print to ensure elements are initialized
+        System.out.println("Initialized elements:");
+        for (Map.Entry<Coord, MapElement> entry : elements.entrySet()) {
+            System.out
+                    .println("Coord: " + entry.getKey() + ", Element: " + entry.getValue().getClass().getSimpleName());
         }
     }
 
@@ -143,46 +178,55 @@ public class Game extends JPanel {
      * A class that handles key events for the game.
      */
     private class KeyHandler extends KeyAdapter {
+
         @Override
-        public void keyPressed(KeyEvent e) {
+        public void keyPressed(KeyEvent e) { // Handle key press events
             int key = e.getKeyCode();
             int dx = 0, dy = 0;
 
-            switch (key) {
+            switch (key) { // Handle arrow keys and WASD keys for movement
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_W:
-                    dy = -1;
+                    dy = -1; // Move up
                     break;
                 case KeyEvent.VK_DOWN:
                 case KeyEvent.VK_S:
-                    dy = 1;
+                    dy = 1; // Move down
                     break;
                 case KeyEvent.VK_LEFT:
                 case KeyEvent.VK_A:
-                    dx = -1;
+                    dx = -1; // Move left
                     break;
                 case KeyEvent.VK_RIGHT:
                 case KeyEvent.VK_D:
-                    dx = 1;
+                    dx = 1; // Move right
                     break;
+                default:
+                    return; // If the key is not one of the above, do nothing
             }
 
-            if (dx != 0 || dy != 0) {
-                int playerX = player.getX();
-                int playerY = player.getY();
-                gameEngine.movePlayer(dx, dy); // Delegate player movement to GameEngine
-                moveCount = gameEngine.getMoveCount(); // Update move count from GameEngine
-                gameEngine.moveCrate(playerX, playerY, dx, dy); // Attempt to move crate
-                repaint();
+            // Call the game engine's movePlayer method to handle player movement
+            gameEngine.movePlayer(dx, dy);
+
+            // Update the move count from the game engine
+            moveCount = gameEngine.getMoveCount();
+
+            // Check for win condition
+            if (gameEngine.checkWin()) {
+                loadNextLevel();
             }
+
+            // Repaint the game view to reflect the new state
+            repaint();
         }
     }
 
     /**
-        * Overrides the paintComponent method to draw the game elements and display the move count.
-        * 
-        * @param g the Graphics object used for drawing
-        */
+     * Overrides the paintComponent method to draw the game elements and display the
+     * move count.
+     *
+     * @param g the Graphics object used for drawing
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -194,15 +238,15 @@ public class Game extends JPanel {
     }
 
     /**
-        * The entry point of the Sokoban game.
-        * 
-        * @param args the command line arguments
-        */
+     * The entry point of the Sokoban game.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         JFrame frame = new JFrame("Sokoban Game");
         Game game = new Game();
         frame.add(game);
-        frame.setSize(800, 600);
+        frame.setSize(800, 600); // Set the size of the frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }

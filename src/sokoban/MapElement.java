@@ -1,28 +1,23 @@
 package sokoban;
 
+// Imports
 import java.awt.Image;
 import java.awt.Graphics;
 
 /**
  * Ben Collins 21006366
- * 15/05/2024
- * Version 1
- * The MapElement class represents an element in the game map.
- * It is an abstract class that provides common properties and methods for all map elements.
+ * 06/06/2024
+ * Version 2
+ * Represents an element in the game map.
  */
 public abstract class MapElement {
-    private int x;
-    private int y;
-    private Image image;
-    protected static final int TILE_SIZE = 32; // Adjust tile size if needed
+    // Variables
+    protected int x;
+    protected int y;
+    protected Image image;
+    protected static final int TILE_SIZE = 32;
 
-    /**
-     * Constructs a MapElement object with the specified coordinates and image.
-     *
-     * @param x     the x-coordinate of the map element
-     * @param y     the y-coordinate of the map element
-     * @param image the image representing the map element
-     */
+    // Constructor
     public MapElement(int x, int y, Image image) {
         this.x = x;
         this.y = y;
@@ -72,6 +67,15 @@ public abstract class MapElement {
      */
     public Image getImage() {
         return image;
+    }
+
+    /**
+     * Sets the image representing the map element.
+     *
+     * @param image the new image representing the map element
+     */
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     /**

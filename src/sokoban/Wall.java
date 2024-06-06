@@ -1,24 +1,19 @@
 package sokoban;
 
+// Imports
 import java.awt.Image;
 import java.awt.Graphics;
 
 /**
  * Ben Collins 21006366
- * 15/05/2024
- * Version 1
- * Represents the Wall in the Sokoban game.
- * The Wall will stop the player walking outside the map.
+ * 06/06/2024
+ * Version 2
+ * Represents the wall in the Sokoban game.
  */
 
 public class Wall extends MapElement {
-    /**
-     * Constructs a new Wall object with the specified coordinates and image.
-     *
-     * @param x     the x-coordinate of the Wall
-     * @param y     the y-coordinate of the Wall
-     * @param image the image representing the Wall
-     */
+
+    // Constructor
     public Wall(int x, int y, Image image) {
         super(x, y, image);
     }

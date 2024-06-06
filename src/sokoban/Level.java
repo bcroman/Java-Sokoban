@@ -1,5 +1,6 @@
 package sokoban;
 
+// Imports
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,13 +10,13 @@ import java.util.List;
 
 /**
  * Ben Collins 21006366
- * 15/05/2024
- * Version 1
+ * 06/06/2024
+ * Version 2
  * Represents a level in the Sokoban game.
  */
 public class Level {
 
-    //Variables
+    // Variables
     private char[][] map;
     private int rows;
     private int cols;
@@ -26,30 +27,32 @@ public class Level {
      * @param filename the name of the file containing the level data
      */
     public void loadLevel(String filename) {
-        List<String> lines = new ArrayList<>();
+        List<String> lines = new ArrayList<>(); // Create a list to store the lines of the file
 
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
-             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(filename); // Get the input stream for the
+                                                                                         // file
+                BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 
-            if (is == null) {
-                throw new IOException("File not found: " + filename);
+            if (is == null) { // Check if the file exists
+                throw new IOException("File not found: " + filename); // Error Message
             }
 
             String line;
-            while ((line = br.readLine()) != null) {
-                lines.add(line);
+            while ((line = br.readLine()) != null) { // Read each line of the file
+                lines.add(line); // Add the line to the list
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if (!lines.isEmpty()) {
-            rows = lines.size();
-            cols = lines.get(0).length();
-            map = new char[rows][cols];
+        if (!lines.isEmpty()) { // Check if the list is not empty
+            rows = lines.size(); // Set the number of rows to the size of the lines list
+            cols = lines.get(0).length(); // Set the number of columns to the length of the first line
+
+            map = new char[rows][cols]; // Create a new char array with the dimensions of the level
 
             for (int i = 0; i < rows; i++) {
-                map[i] = lines.get(i).toCharArray();
+                map[i] = lines.get(i).toCharArray(); // Convert each line to a char array and assign it to the map
             }
         }
     }

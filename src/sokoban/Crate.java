@@ -1,23 +1,18 @@
 package sokoban;
 
+// Imports
 import java.awt.Image;
 import java.awt.Graphics;
 
 /**
  * Ben Collins 21006366
- * 15/05/2024
- * Version 1
+ * 05/06/2024
+ * Version 2.0
  * Represents a crate in the Sokoban game.
- * Inherits from the MapElement class.
  */
 public class Crate extends MapElement {
-    /**
-     * Constructs a crate object with the specified coordinates and image.
-     *
-     * @param x     The x-coordinate of the crate.
-     * @param y     The y-coordinate of the crate.
-     * @param image The image representing the crate.
-     */
+
+    // Constructor
     public Crate(int x, int y, Image image) {
         super(x, y, image);
     }
@@ -25,8 +20,8 @@ public class Crate extends MapElement {
     /**
      * Moves the crate by the specified amount in the x and y directions.
      *
-     * @param dx The amount to move the crate in the x direction.
-     * @param dy The amount to move the crate in the y direction.
+     * @param dx the amount to move in the x direction
+     * @param dy the amount to move in the y direction
      */
     public void move(int dx, int dy) {
         setX(getX() + dx);
@@ -34,12 +29,21 @@ public class Crate extends MapElement {
     }
 
     /**
-     * Draws the crate on the specified graphics context.
+     * Changes the image of the crate.
      *
-     * @param g The graphics context on which to draw the crate.
+     * @param image the new image of the crate
+     */
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    /**
+     * Draws the crate on the game map.
+     *
+     * @param g the graphics object to draw on
      */
     @Override
     public void draw(Graphics g) {
-        g.drawImage(getImage(), getX() * TILE_SIZE, getY() * TILE_SIZE, null);
+        g.drawImage(getImage(), getX() * TILE_SIZE, getY() * TILE_SIZE, null); // Assuming each tile is 32x32 pixels
     }
 }
